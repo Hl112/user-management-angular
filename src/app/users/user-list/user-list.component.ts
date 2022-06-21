@@ -5,7 +5,6 @@ import {Observable} from "rxjs";
 import {Store} from "@ngrx/store";
 import {selectUsers} from "../store/user.selector";
 import {MatDialog} from "@angular/material/dialog";
-import {newArray} from "@angular/compiler/src/util";
 import {UserFormComponent} from "../user-form/user-form.component";
 
 @Component({
@@ -19,26 +18,58 @@ export class UserListComponent implements OnInit {
     let users: User[] = this.users;
 
     //--  Apply Sort
+    users = this.sortUser(users);
+
     //--  Apply Search
     users = this.searchUser(users);
+
     //-- Apply View
     this.userInPosition = this.convertUserGroupByPosition(users);
   }
 
-  openCreateDialog() {
+  sortUser(arrUser?: User[]) {
+    let result: User[] = [];
 
+    if (arrUser === undefined || arrUser === null || arrUser.length === 0)
+      return result;
+
+    arrUser.forEach(user => {
+      result.push(user);
+    });
+    switch (this.sortBy) {
+      case 'createDate':
+        result.sort((userA: User, userB: User) => {
+          if (userA.createDate && userB.createDate) {
+            if (!this.sortOrder) {
+              return userA.createDate - userB.createDate;
+            } else {
+              return userB.createDate - userA.createDate;
+            }
+          }
+          return 0;
+        })
+        break;
+      default:
+        result.sort((userA: User, userB: User) => {
+          if (userA[this.sortBy] && userB[this.sortBy]) {
+            let valueA = userA[this.sortBy] as string;
+            let valueB = userB[this.sortBy] as string;
+            if (!this.sortOrder) {
+              return valueA.localeCompare(valueB);
+            } else {
+              return valueB.localeCompare(valueA);
+            }
+          }
+          return 0;
+        })
+    }
+    return result;
   }
-
-  openUpdateDialog(user: User) {
-
-  }
-
-
 
   searchUser(arrUser?: User[]) {
     let result: User[] = [];
 
-    if (arrUser === undefined || arrUser === null)
+    if (arrUser === undefined || arrUser === null || arrUser.length === 0)
       return result;
 
     if (this.searchValue === '')
@@ -99,11 +130,11 @@ export class UserListComponent implements OnInit {
     this.users$.subscribe((arrUser) => {
       this.users = arrUser;
     })
-    this.userInPosition = this.convertUserGroupByPosition(this.searchUser(this.users));
+    this.loadUsers();
   }
 
-  sortBy = 'createDate';
-  sortOrder: boolean = false;
+  sortBy: keyof User = 'createDate';
+  sortOrder: boolean = false; // default ASC
   searchValue: string = '';
 
   users!: User[];
