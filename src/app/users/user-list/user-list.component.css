@@ -1,0 +1,191 @@
+* {
+  background: #eeeeee 0 0 no-repeat padding-box;
+  opacity: 1;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.action {
+  padding: 32px 16px 0 16px;
+  height: 70px;
+}
+
+.left-action {
+  text-transform: uppercase;
+}
+
+.separate {
+  border-right: 1px solid #000;
+  margin: 5px 10px 0;
+  height: 24px;
+}
+
+/* Add User */
+.btn-add-user {
+  border-radius: 4px;
+  width: 148px;
+  height: 36px;
+  background: #00458f 0 0 no-repeat padding-box;
+  text-align: left;
+  letter-spacing: 0;
+  color: #ffffff;
+}
+
+.btn-add-user__icon {
+  padding-right: 8px;
+
+  color: white;
+  background: #00458f 0 0 no-repeat padding-box;
+}
+
+.add-user__label {
+  line-height: 9px;
+  background: transparent;
+}
+
+/* Sort */
+#sw_sort {
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.sort-by__label {
+  padding-top: 8px;
+  margin-right: 5px;
+  text-align: left;
+  font: normal normal normal 16px/19px Roboto;
+  letter-spacing: 0px;
+  color: #707070;
+}
+
+.select-sort {
+  width: 112px;
+  border-radius: 6px;
+  text-align: left;
+  font: normal normal normal 14px/17px Roboto;
+  letter-spacing: 0px;
+  color: #374761;
+  border: 2px solid #77777777;
+  background-color: #fff;
+}
+
+.sort-order {
+  padding-top: 6px;
+  margin-left: 2px;
+  margin-right: 2px;
+  height: 24px;
+  width: 24px;
+}
+
+.sort-criteria__hidden {
+  display: none;
+}
+
+/* Search */
+.search-container {
+  position: relative;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #777777;
+}
+
+.search-icon {
+  background: #fff;
+}
+
+.search-input {
+  height: 24px;
+  background-color: #fff;
+  border: none;
+  outline: none;
+}
+
+/* Tree User*/
+.tree-user {
+  margin-top: 24px;
+}
+
+.tree-item {
+  text-align: justify;
+}
+
+.tree-item::after {
+  content: "";
+  text-align: right;
+  display: block;
+  width: 100%;
+  /* height: 80px; */
+  border-top: 2px solid #70707075;
+}
+
+.tree-label {
+  padding-right: 8px;
+  text-align: left;
+  font: normal normal normal 20px/24px Roboto;
+  letter-spacing: 0;
+  color: #374761;
+}
+
+/* Card */
+.card-container {
+  display: flex;
+  padding-left: -12px;
+  padding-right: -12px;
+}
+
+.card-item {
+  display: inline-block;
+  padding: 0 6px;
+}
+
+/* Accordion */
+.accordion-header {
+  margin: 0;
+}
+
+.accordion-button::after {
+  position: absolute;
+  left: 12px;
+}
+
+.accordion-button {
+  padding-left: 40px;
+  border: none;
+}
+
+.accordion-item {
+  border: none;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: transparent;
+  box-shadow: none;
+  color: #374761;
+}
+
+.accordion-button:not(.collapsed)::after {
+  background-image: url('src/assets/images/accordion.svg');
+  transform: rotate(0deg);
+
+}
+
+.accordion-button::after {
+  transform: rotate(-90deg);
+  color: #374761;
+}
+
+.accordion-button::before {
+  content: "";
+  position: absolute;
+
+  left: 180px;
+  text-align: right;
+  display: block;
+  width: 100%;
+  /* height: 80px; */
+  border-top: 2px solid #70707075;
+}

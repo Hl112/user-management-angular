@@ -1,0 +1,84 @@
+<div class="container-fluid d-flex flex-column">
+  <div class="mt-4">
+    <div class="row">
+      <div class="left-action d-flex col-12 col-sm-3 col-md-4 col-lg-5 justify-content-center justify-content-md-start">
+        <button mat-raised-button (click)="openCreateDialog()"
+                class="d-flex justify-content-center align-content-center btn-add-user">
+          <i class="material-icons btn-add-user__icon">add</i>
+          <span class="add-user__label">CREATE USER</span>
+        </button>
+      </div>
+      <div class="d-flex justify-content-end right-action col-12 col-sm-9 col-md-8 col-lg-7">
+        <div class="row col-12">
+          <div
+            class="d-flex justify-content-center justify-content-sm-end align-content-center col-12 col-sm-8 col-md-7 col-lg-6 mb-3 mt-3 mt-sm-0 mb-sm-0">
+            <p class="sort-by__label">Sort by</p>
+            <select
+              [(ngModel)]="sortBy"
+              (change)="loadUsers()"
+              class="select-sort"
+              aria-label="Create Date">
+              <option value="createDate" selected>Created Date</option>
+              <option value="lastName">Last Name</option>
+              <option value="firstName">First Name</option>
+              <option value="email">Email</option>
+            </select>
+            <div class="sort-order">
+              <label for="sw_sort">
+                <input type="checkbox" [(ngModel)]="checkOrder" (change)="onChangeOrder()" name="m" id="sw_sort"/>
+                <i class="material-icons sort-criteria sort_asc" [hidden]="checkOrder">arrow_downward</i>
+                <i class="material-icons sort-criteria sort-desc" [hidden]="!checkOrder">arrow_upward</i>
+              </label>
+            </div>
+            <div class="separate d-none d-sm-block d-lg-block"></div>
+          </div>
+          <div class="col-12 col-sm-4 col-md-5 col-lg-6">
+            <div class="d-flex form-control rounded search-container">
+              <i class="material-icons search-icon">search</i>
+              <input
+                type="search"
+                class="search-input"
+                placeholder="Search"
+                [(ngModel)]="searchValue"
+                (keyup)="loadUsers()"
+                aria-label="Search"
+                aria-describedby="search-addon"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row tree-user mt-4">
+    <div class="accordion" [id]="'accordion'">
+      <div class="accordion-item" *ngFor="let uip of userInPosition; index as i">
+        <h2 class="accordion-header" [id]="'heading' + i">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            aria-expanded="true"
+            [attr.data-bs-target]="'#IDT' + i"
+            [attr.aria-controls]="'IDT' + i"
+          >
+            {{ uip.name }}
+          </button>
+        </h2>
+        <div
+          [id]="'IDT' + i"
+          class="accordion-collapse collapse show"
+          [attr.aria-labelledby]="'heading' + i"
+          data-bs-parent="#accordionExample"
+        >
+          <ng-container *ngFor="let u of uip.children">
+            <app-card-user [user]="u" (click)="openUpdateDialog(u)"
+                           class="card-item col-12 col-sm-6 col-md-4 col-lg-3 mt-3"
+            ></app-card-user>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
