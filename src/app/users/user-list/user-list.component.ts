@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from "../shared/user";
 import {UserInPosition} from "./user-in-position";
 import {Observable} from "rxjs";
@@ -15,26 +15,53 @@ import {UserFormComponent} from "../user-form/user-form.component";
 })
 export class UserListComponent implements OnInit {
 
-  loadUsers(){
+  loadUsers() {
+    let users: User[] = this.users;
+
+    //--  Apply Sort
+    //--  Apply Search
+    users = this.searchUser(users);
+    //-- Apply View
+    this.userInPosition = this.convertUserGroupByPosition(users);
+  }
+
+  openCreateDialog() {
 
   }
 
-  onChangeOrder(){
-
-  }
-
-  openCreateDialog(){
-
-  }
-
-  openUpdateDialog(user : User){
+  openUpdateDialog(user: User) {
 
   }
 
 
-  openDialog(user?: User){
+
+  searchUser(arrUser?: User[]) {
+    let result: User[] = [];
+
+    if (arrUser === undefined || arrUser === null)
+      return result;
+
+    if (this.searchValue === '')
+      return arrUser;
+
+    arrUser.forEach(user => {
+      for (let prop in user) {
+        let value = user[prop as keyof User];
+        if (prop !== 'createDate' && value !== undefined && value !== null) {
+          if ((value as string).toLowerCase().includes(this.searchValue.toLowerCase())) {
+            result.push(user);
+            break;
+          }
+        }
+      }
+    })
+
+    return result;
+  }
+
+  openDialog(user?: User) {
     const dialogRef = this.dialog.open(UserFormComponent, {
-      data :{
+      data: {
         title: user ? "UPDATE USER" : "CREATE NEW USER",
         user: user,
         isCreate: user
@@ -44,18 +71,18 @@ export class UserListComponent implements OnInit {
     })
   }
 
-  convertUserGroupByPosition(arrUser : User[]){
-    let data : UserInPosition[] = [
-      { name: 'Team lead', children: [] },
-      { name: 'Architecture', children: []},
-      { name: 'Web Developer', children: []},
-      { name: 'Tester', children: []},
-      { name: 'UI/UX', children: []},
-      { name: 'DBA', children: []},
+  convertUserGroupByPosition(arrUser: User[]) {
+    let data: UserInPosition[] = [
+      {name: 'Team lead', children: []},
+      {name: 'Architecture', children: []},
+      {name: 'Web Developer', children: []},
+      {name: 'Tester', children: []},
+      {name: 'UI/UX', children: []},
+      {name: 'DBA', children: []},
     ]
 
-    for(let user of arrUser){
-      let k = data.find( dt => dt.name == user.title)
+    for (let user of arrUser) {
+      let k = data.find(dt => dt.name == user.title)
       k?.children?.push(user);
     }
     return data;
@@ -64,23 +91,23 @@ export class UserListComponent implements OnInit {
   constructor(
     private store: Store,
     public dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.users$ = this.store.select(selectUsers);
     this.users$.subscribe((arrUser) => {
       this.users = arrUser;
     })
-    this.userInPosition = this.convertUserGroupByPosition(this.users);
+    this.userInPosition = this.convertUserGroupByPosition(this.searchUser(this.users));
   }
 
   sortBy = 'createDate';
-  sortOrder : string = 'ASC';
-  searchValue : string = '';
-  checkOrder! : boolean;
+  sortOrder: boolean = false;
+  searchValue: string = '';
 
-  users! : User[];
-  users$? : Observable<User[]>;
-  userInPosition? : UserInPosition[];
+  users!: User[];
+  users$?: Observable<User[]>;
+  userInPosition?: UserInPosition[];
 
 }

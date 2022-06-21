@@ -25,9 +25,9 @@
             </select>
             <div class="sort-order">
               <label for="sw_sort">
-                <input type="checkbox" [(ngModel)]="checkOrder" (change)="onChangeOrder()" name="m" id="sw_sort"/>
-                <i class="material-icons sort-criteria sort_asc" [hidden]="checkOrder">arrow_downward</i>
-                <i class="material-icons sort-criteria sort-desc" [hidden]="!checkOrder">arrow_upward</i>
+                <input type="checkbox" [(ngModel)]="sortOrder" (change)="loadUsers()" name="m" id="sw_sort"/>
+                <i class="material-icons sort-criteria sort_asc" [hidden]="sortOrder">arrow_downward</i>
+                <i class="material-icons sort-criteria sort-desc" [hidden]="!sortOrder">arrow_upward</i>
               </label>
             </div>
             <div class="separate d-none d-sm-block d-lg-block"></div>
