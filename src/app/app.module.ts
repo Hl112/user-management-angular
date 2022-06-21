@@ -7,6 +7,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UsersComponent } from './users/users.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { NotFoundComponent } from './shared/not-found/not-found.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

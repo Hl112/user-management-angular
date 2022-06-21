@@ -2,7 +2,7 @@
   <div class="mt-4">
     <div class="row">
       <div class="left-action d-flex col-12 col-sm-3 col-md-4 col-lg-5 justify-content-center justify-content-md-start">
-        <button mat-raised-button (click)="openCreateDialog()"
+        <button mat-raised-button (click)="openDialog(undefined)"
                 class="d-flex justify-content-center align-content-center btn-add-user">
           <i class="material-icons btn-add-user__icon">add</i>
           <span class="add-user__label">CREATE USER</span>
@@ -72,7 +72,7 @@
           data-bs-parent="#accordionExample"
         >
           <ng-container *ngFor="let u of uip.children">
-            <app-card-user [user]="u" (click)="openUpdateDialog(u)"
+            <app-card-user [user]="u" (click)="openDialog(u)"
                            class="card-item col-12 col-sm-6 col-md-4 col-lg-3 mt-3"
             ></app-card-user>
           </ng-container>

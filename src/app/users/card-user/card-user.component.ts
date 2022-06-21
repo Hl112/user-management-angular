@@ -9,7 +9,7 @@ import {User} from "../shared/user";
 })
 export class CardUserComponent implements OnInit {
 
-  @Input() user? : User;
+  @Input() user! : User;
 
   constructor() { }
 
