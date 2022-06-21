@@ -22,7 +22,7 @@ header {
   width: 40px;
 }
 .nav-item:hover{
-  background: #4B70C024 0% 0% no-repeat padding-box;
+  background: #4B70C024 0 0 no-repeat padding-box;
 }
 .img-icon{
   width: 16px;
@@ -31,4 +31,5 @@ header {
 
 .material-icons{
   color: #00458F;
+  cursor: pointer;
 }
