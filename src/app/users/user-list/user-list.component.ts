@@ -95,7 +95,7 @@ export class UserListComponent implements OnInit {
       data: {
         title: user ? "UPDATE USER" : "CREATE NEW USER",
         user: user,
-        isCreate: user
+        isCreate: !user
       },
       width: "600px",
       height: "600px"
@@ -129,8 +129,8 @@ export class UserListComponent implements OnInit {
     this.users$ = this.store.select(selectUsers);
     this.users$.subscribe((arrUser) => {
       this.users = arrUser;
+      this.loadUsers();
     })
-    this.loadUsers();
   }
 
   sortBy: keyof User = 'createDate';

@@ -1,1 +1,136 @@
-<p>user-form works!</p>
+<div class="row d-flex">
+  <h1 mat-dialog-title class="col-12 text-center">{{ data.title }}</h1>
+  <div>
+    <form [formGroup]="userForm" #formDir="ngForm" class="d-flex flex-column needs-validation">
+      <div class="col-12 d-flex justify-content-center">
+        <label for="imgC">
+          <div class="d-flex justify-content-center dialog-img">
+            <img src="assets/images/avatar.png" class="img-avatar" alt="No-Avatar">
+            <img src="assets/images/plus.png" class="img-plus" alt="plus-image">
+            <input type="file" name="file"
+                   accept="image/*"
+                   formControlName="image" id="imgC">
+          </div>
+        </label>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control"
+               [class.valid]="!firstName?.invalid"
+               [class.error]="firstName?.invalid"
+               formControlName="firstName" required placeholder="First name">
+        <div *ngIf="firstName?.invalid" class="invalid">
+          <div *ngIf="firstName?.errors?.['required']">
+            Please enter user first name
+          </div>
+          <div *ngIf="firstName?.errors?.['maxlength']">
+            The input line is too long
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <input type="text" class="form-control"
+               [class.valid]="!lastName?.invalid"
+               [class.error]="lastName?.invalid"
+               formControlName="lastName"
+               required placeholder="Last name">
+        <div *ngIf="lastName?.invalid" class="invalid">
+          <div *ngIf="lastName?.errors?.['required']">
+            Please enter user last name
+          </div>
+          <div *ngIf="lastName?.errors?.['maxlength']">
+            The input line is too long
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-7">
+          <input type="date" id="date"
+                 [attr.data-date]="dateTime"
+                 [class.valid]="!userForm.controls['dateOfBirth']?.hasError('invalidDate')"
+                 [class.error]="userForm.controls['dateOfBirth']?.hasError('invalidDate')"
+                 (ngModelChange)="onChangeDate($event)"
+                 value="2022-06-17"
+                 class="form-control"
+                 formControlName="dateOfBirth" placeholder="Date of birth (optional)">
+          <div *ngIf="userForm.controls['dateOfBirth']?.hasError('invalidDate')" class="invalid">
+            Wrong date format
+          </div>
+        </div>
+        <div class="form-group col-5 d-flex justify-content-around align-content-center mt-4">
+
+          <div class="custom-control custom-radio custom-control-inline mr-3">
+            <input type="radio" id="customRadioInline1" formControlName="gender" value="Male"
+                   class="custom-control-input">
+            <label class="custom-control-label" for="customRadioInline1">Male</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline2" formControlName="gender" value="Female"
+                   class="custom-control-input">
+            <label class="custom-control-label" for="customRadioInline2">Female</label>
+          </div>
+
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" formControlName="company" [disabled]="true" readonly>
+      </div>
+      <div class="form-group">
+        <select
+          class="form-control"
+          [class.valid]="!title?.invalid"
+          [class.error]="title?.invalid"
+          formControlName="title">
+          <option *ngFor="let position of titles; index as i" [value]="position">{{position}}</option>
+        </select>
+        <div *ngIf="title?.invalid" class="invalid">
+          Title is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control"
+               [class.valid]="!email?.invalid"
+               [class.error]="email?.invalid"
+               [disabled]="!data.isCreate"
+               [readonly]="!data.isCreate"
+               formControlName="email" required placeholder="Email">
+        <div *ngIf="email?.invalid" class="invalid">
+          <div *ngIf="email?.errors?.['required']">
+            Please enter user email
+          </div>
+          <div *ngIf="email?.errors?.['invalidEmail']">
+            Wrong email format
+          </div>
+          <div *ngIf="email?.errors?.['isExisted']">
+            Email existed in system
+          </div>
+        </div>
+      </div>
+
+      <div mat-dialog-actions class="d-flex justify-content-between">
+        <div class="left-action">
+          <button
+            mat-raised-button
+            [hidden]="data.isCreate"
+            class="dialog-button dialog-button__delete"
+            (click)="openConfirmDelete()">
+            DELETE USER
+          </button>
+        </div>
+        <div class="right-action">
+          <button mat-button (click)="onNoClick()">DISCARD</button>
+          <button type="submit"
+                  mat-raised-button
+                  [disabled]="userForm.invalid"
+                  (click)="data.isCreate ? onCreateUser() : onUpdateUser()"
+                  class="dialog-button"
+          >
+            {{data.isCreate ? 'CREATE USER' : 'UPDATE USER'}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
