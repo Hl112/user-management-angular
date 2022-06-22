@@ -5,7 +5,6 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {DialogData} from "../shared/dialog-data";
 import {User} from "../shared/user";
 import {Store} from "@ngrx/store";
-import {selectUsers} from "../store/user.selector";
 import {Observable} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {ConfirmFormComponent} from "../confirm-form/confirm-form.component";
@@ -65,12 +64,7 @@ export class UserFormComponent implements OnInit {
   get lastName() {
     return this.userForm.get('lastName');
   }
-  get dateOfBirth() {
-    return this.userForm.get('dataOfBirth');
-  }
-  get company() {
-    return this.userForm.get('company');
-  }
+
   get title() {
     return this.userForm.get('title');
   }
@@ -78,9 +72,6 @@ export class UserFormComponent implements OnInit {
     return this.userForm.get('email');
   }
 
-  get gender(){
-    return this.userForm.get('gender');
-  }
 
   constructor(
     private us: UserService,
@@ -94,10 +85,11 @@ export class UserFormComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.data.user;
     this.isEdit = this.data.isCreate;
-    this.users$ = this.store.select(selectUsers);
+    this.users$ = this.userService.loadUser();
     this.users$.subscribe(arrUser => {
       this.users = arrUser;
     })
+    //--Load custom date to form
     if(this.user !== undefined && this.user !== null){
       this.onChangeDate(this.user.dateOfBirth!);
     }
@@ -119,9 +111,7 @@ export class UserFormComponent implements OnInit {
   dateTime? = '06-17-2022';
   userForm! : FormGroup;
   isEdit : boolean = false;
-  public titles = ["Team lead", "Architecture","Web Developer","Tester","UI/UX","DBA"];
-
-
+  public titles = this.userService.titles;
 
   validationUniEmail: ValidatorFn = (group: AbstractControl) : ValidationErrors | null =>{
     let email = group.value;
@@ -129,8 +119,8 @@ export class UserFormComponent implements OnInit {
       return null;
     }
     let isExisted = false;
-    let f = this.users.find(u => u.email == email);
-    if(f != undefined){
+    let userInStore = this.users.find(user => user.email == email);
+    if(userInStore != undefined){
       isExisted = true
     }
     return isExisted ? {isExisted : true} : null;

@@ -129,7 +129,7 @@ export const initialState : User[] = [
     firstName: "Hoàng",
     title: 'Tester',
     company: 'ROSEN',
-    dateOfBirth: '22/03/1998',
+    dateOfBirth: '03/22/1998',
     gender:'Male',
     createDate: 1223
   },
@@ -139,7 +139,7 @@ export const initialState : User[] = [
     firstName: "Trắng",
     title: 'DBA',
     company: 'ROSEN',
-    dateOfBirth: '22/05/1996',
+    dateOfBirth: '05/05/1996',
     gender:'Male',
     createDate: 1223
   },
@@ -149,7 +149,7 @@ export const initialState : User[] = [
     firstName: "Đen",
     title: 'DBA',
     company: 'ROSEN',
-    dateOfBirth: '22/05/1996',
+    dateOfBirth: '01/05/1996',
     gender:'Male',
     createDate: 1223
   },

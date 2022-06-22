@@ -13,15 +13,16 @@ import {UserInPosition} from "../user-list/user-in-position";
 export class UserService {
 
   users$: Observable<User[]> = this.store.select(selectUsers);
+  titles : Array<string> = ["Team lead", "Architecture","Web Developer","Tester","UI/UX","DBA"];
 
   constructor(
     private store: Store
   ) {
   }
 
-  // loadUser(){
-  //   return this.store.
-  // }
+  loadUser(){
+    return this.store.select(selectUsers);
+  }
 
   createUser(userData: User) {
     let isExisted = false;
