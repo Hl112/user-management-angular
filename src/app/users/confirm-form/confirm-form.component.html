@@ -1,0 +1,24 @@
+<div class="row d-flex">
+  <h3 mat-dialog-title class="col-12">{{ data.title }}</h3>
+  <h3 mat-dialog-title class="col-12">Please input the user email as confirmation.</h3>
+  <form [formGroup]="confirmForm" #formDir="ngForm">
+    <div class="form-group">
+      <input type="text" class="form-control"
+             [class.valid]="!email?.invalid"
+             [class.error]="email?.invalid"
+             formControlName="email" required placeholder="Email">
+      <div *ngIf="confirmForm.invalid" class="invalid">Please input the email as confirmation</div>
+    </div>
+    <div mat-dialog-actions class="d-flex justify-content-end">
+      <button mat-button (click)="onNoClick()">DISCARD</button>
+      <button type="submit"
+              mat-raised-button
+              [disabled]="confirmForm.invalid"
+              (click)="onDeleteUser()"
+              class="dialog-button dialog-button__delete"
+      >
+        DELETE
+      </button>
+    </div>
+  </form>
+</div>

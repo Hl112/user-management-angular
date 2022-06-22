@@ -10,6 +10,7 @@ import { userReducer } from "./store/user.reducer";
 import { MatDialogModule } from "@angular/material/dialog";
 import { UserFormComponent } from './user-form/user-form.component';
 import { ConfirmFormComponent } from './confirm-form/confirm-form.component';
+import {UserService} from "./services/user.service";
 
 export const reducers : ActionReducerMap<any> = {
   users: userReducer
@@ -31,7 +32,7 @@ export const reducers : ActionReducerMap<any> = {
     UserFormComponent,
     ConfirmFormComponent
   ],
-  providers: []
+  providers: [UserService]
 })
 export class UsersModule {
 

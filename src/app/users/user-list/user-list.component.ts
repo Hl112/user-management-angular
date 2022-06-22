@@ -6,6 +6,7 @@ import {Store} from "@ngrx/store";
 import {selectUsers} from "../store/user.selector";
 import {MatDialog} from "@angular/material/dialog";
 import {UserFormComponent} from "../user-form/user-form.component";
+import {UserService} from "../services/user.service";
 
 @Component({
   selector: 'app-user-list',
@@ -18,13 +19,13 @@ export class UserListComponent implements OnInit {
     let users: User[] = this.users;
 
     //--  Apply Sort
-    users = this.sortUser(users);
+    users = this.userService.sortUser(users, this.sortBy, this.sortOrder);
 
     //--  Apply Search
-    users = this.searchUser(users);
+    users = this.userService.searchUser(users, this.searchValue);
 
     //-- Apply View
-    this.userInPosition = this.convertUserGroupByPosition(users);
+    this.userInPosition = this.userService.convertUserGroupByPosition(users);
   }
 
   sortUser(arrUser?: User[]) {
@@ -86,7 +87,6 @@ export class UserListComponent implements OnInit {
         }
       }
     })
-
     return result;
   }
 
@@ -121,7 +121,8 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private store: Store,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private userService: UserService
   ) {
   }
 
@@ -131,6 +132,7 @@ export class UserListComponent implements OnInit {
       this.users = arrUser;
       this.loadUsers();
     })
+
   }
 
   sortBy: keyof User = 'createDate';

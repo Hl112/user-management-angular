@@ -6,10 +6,11 @@ import {DialogData} from "../shared/dialog-data";
 import {User} from "../shared/user";
 import {Store} from "@ngrx/store";
 import {selectUsers} from "../store/user.selector";
-import {map, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {DatePipe} from "@angular/common";
-import {addUser, updateUser} from "../store/users.actions";
 import {ConfirmFormComponent} from "../confirm-form/confirm-form.component";
+import {validationEmail} from "./validation-email.directive";
+import {validationDob} from "./validation-dob.directive";
 
 @Component({
   selector: 'app-user-form',
@@ -19,7 +20,7 @@ import {ConfirmFormComponent} from "../confirm-form/confirm-form.component";
 export class UserFormComponent implements OnInit {
 
   onChangeDate(value: string){
-    var x = new Date(value);
+    let x = new Date(value);
     let pipe = new DatePipe('en-US');
     this.dateTime = pipe.transform(x, 'MM-dd-YYYY') ?? '';
   }
@@ -33,41 +34,24 @@ export class UserFormComponent implements OnInit {
       ...this.userForm.value,
       createDate : Date.now()
     };
-    let isExisted = false;
-    this.users$
-      .pipe(
-        map(array =>{
-          let existed = array.find(u => u.email == this.userForm.value.email)
-          return existed == undefined;
-        }),
-      )
-      .subscribe(e=>
-      {
-        isExisted = e;
-      });
-
-    if(isExisted){
-      this.store.dispatch(addUser({user : createUser }));
-      this.dialogRef.close();
-    }
+    let result = this.userService.createUser(createUser);
+    if(result) this.dialogRef.close();
   }
 
   onUpdateUser(){
     let userData : User = {
       ...this.userForm.value,
     };
-    console.log(userData)
-    this.store.dispatch(updateUser({user : userData}));
+    this.userService.updateUser(userData);
     this.dialogRef.close();
   }
 
   openConfirmDelete(){
     this.dialogRef.close();
-    const dialogConfirmRef = this.dialog.open(ConfirmFormComponent, {
+    this.dialog.open(ConfirmFormComponent, {
       data :{
         title: "Are you sure you want to DELETE " + this.userForm.value['email'] + "?",
         email: this.userForm.get('email')?.value,
-
       },
       width: "500px",
       height: "250px"
@@ -103,52 +87,41 @@ export class UserFormComponent implements OnInit {
     private store: Store,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<UserFormComponent>,
+    private userService : UserService,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) { }
 
   ngOnInit(): void {
     this.user = this.data.user;
+    this.isEdit = this.data.isCreate;
     this.users$ = this.store.select(selectUsers);
     this.users$.subscribe(arrUser => {
       this.users = arrUser;
     })
-
+    if(this.user !== undefined && this.user !== null){
+      this.onChangeDate(this.user.dateOfBirth!);
+    }
 
     this.userForm = new FormGroup({
       image: new FormControl(''),
       firstName: new FormControl(this.user ? this.user.firstName : '', [Validators.required, Validators.maxLength(80)]),
       lastName: new FormControl(this.user ? this.user.lastName : '', [Validators.required, Validators.maxLength(80)]),
-      dateOfBirth: new FormControl(this.user ? this.user.dateOfBirth : '2022-06-17', [this.validationDob]),
+      dateOfBirth: new FormControl(this.user ? this.user.dateOfBirth : '2022-06-17', [validationDob]),
       gender: new FormControl(this.user ? this.user.gender : 'Female'),
       company: new FormControl('ROSEN'),
       title: new FormControl(this.user ? this.user.title : this.titles[0], [Validators.required]),
-      email: new FormControl(this.user ? this.user.email : '',[Validators.required, this.validationEmail, this.validationUniEmail] )
+      email: new FormControl(this.user ? this.user.email : '',[Validators.required, validationEmail, this.validationUniEmail] )
     })
   }
   user? :User;
   users!: User[];
   users$!: Observable<User[]>;
-  dateTime : string = '06-17-2022';
+  dateTime? = '06-17-2022';
   userForm! : FormGroup;
+  isEdit : boolean = false;
   public titles = ["Team lead", "Architecture","Web Developer","Tester","UI/UX","DBA"];
 
 
-  validationEmail: ValidatorFn = (group: AbstractControl) : ValidationErrors | null =>{
-    let email = group.value;
-    let hasError = false;
-    let errorObj = {
-      validEmail : true
-    };
-    if(!String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      )){
-      hasError = true;
-      errorObj.validEmail = false;
-    }
-    return !hasError ? null : { invalidEmail : true};
-  }
 
   validationUniEmail: ValidatorFn = (group: AbstractControl) : ValidationErrors | null =>{
     let email = group.value;
@@ -163,13 +136,4 @@ export class UserFormComponent implements OnInit {
     return isExisted ? {isExisted : true} : null;
   }
 
-  validationDob: ValidatorFn = (group: AbstractControl) : ValidationErrors | null =>{
-    let dob = group.value;
-    let isValid = true;
-    let date = new Date(dob);
-    if(date.getFullYear() < 1900 || date.getFullYear() > 2022){
-      isValid = false;
-    }
-    return isValid ? null : {invalidDate : true};
-  }
 }

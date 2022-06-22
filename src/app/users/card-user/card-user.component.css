@@ -26,12 +26,13 @@ p {
   height: min-content;
   box-shadow: 0 0 2px #00000029;
   border-radius: 6px;
+  min-height: 224px;
 }
 
 .card-img {
   width: 200px;
-  height: 200px;
-  min-height: 225px;
+  height: auto;
+  /*min-height: 225px;*/
 }
 
 .card-detail {

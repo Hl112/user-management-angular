@@ -1,5 +1,21 @@
-<div class="row d-flex">
+<div class="row d-flex user-form">
   <h1 mat-dialog-title class="col-12 text-center">{{ data.title }}</h1>
+  <span class="top-left__action">
+    <button
+      mat-raised-button
+      [hidden]="data.isCreate"
+      class="dialog-button dialog-button__delete"
+      (click)="openConfirmDelete()">
+      DELETE
+    </button>
+  </span>
+  <div class="top-right__action d-flex justify-content-end">
+    <label for="is_edit">
+    <i class="material-icons" [hidden]="data.isCreate || isEdit">create</i>
+    <i class="material-icons" [hidden]="data.isCreate || !isEdit">close</i>
+      <input type="checkbox" [(ngModel)]="isEdit" name="m" id="is_edit"/>
+    </label>
+  </div>
   <div>
     <form [formGroup]="userForm" #formDir="ngForm" class="d-flex flex-column needs-validation">
       <div class="col-12 d-flex justify-content-center">
@@ -15,10 +31,11 @@
       </div>
       <div class="form-group">
         <input type="text" class="form-control"
-               [class.valid]="!firstName?.invalid"
-               [class.error]="firstName?.invalid"
+               [class.valid]="!firstName?.invalid && (!firstName?.dirty || !firstName?.touched)"
+               [class.error]="firstName?.invalid && (firstName?.dirty || firstName?.touched)"
+               [readOnly]="!isEdit"
                formControlName="firstName" required placeholder="First name">
-        <div *ngIf="firstName?.invalid" class="invalid">
+        <div *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)" class="invalid">
           <div *ngIf="firstName?.errors?.['required']">
             Please enter user first name
           </div>
@@ -31,11 +48,12 @@
 
       <div class="form-group">
         <input type="text" class="form-control"
-               [class.valid]="!lastName?.invalid"
-               [class.error]="lastName?.invalid"
+               [class.valid]="!lastName?.invalid && (lastName?.dirty || lastName?.touched)"
+               [class.error]="lastName?.invalid && (lastName?.dirty || lastName?.touched)"
+               [readOnly]="!isEdit"
                formControlName="lastName"
                required placeholder="Last name">
-        <div *ngIf="lastName?.invalid" class="invalid">
+        <div *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)" class="invalid">
           <div *ngIf="lastName?.errors?.['required']">
             Please enter user last name
           </div>
@@ -50,6 +68,7 @@
                  [attr.data-date]="dateTime"
                  [class.valid]="!userForm.controls['dateOfBirth']?.hasError('invalidDate')"
                  [class.error]="userForm.controls['dateOfBirth']?.hasError('invalidDate')"
+                 [readOnly]="!isEdit"
                  (ngModelChange)="onChangeDate($event)"
                  value="2022-06-17"
                  class="form-control"
@@ -60,15 +79,15 @@
         </div>
         <div class="form-group col-5 d-flex justify-content-around align-content-center mt-4">
 
-          <div class="custom-control custom-radio custom-control-inline mr-3">
+          <div class="d-flex">
             <input type="radio" id="customRadioInline1" formControlName="gender" value="Male"
-                   class="custom-control-input">
-            <label class="custom-control-label" for="customRadioInline1">Male</label>
+                   class="custom-control-input btn-radio" [attr.disabled]="!isEdit ? true: null">
+            <label class="btn-radio__label" for="customRadioInline1">Male</label>
           </div>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="d-flex">
             <input type="radio" id="customRadioInline2" formControlName="gender" value="Female"
-                   class="custom-control-input">
-            <label class="custom-control-label" for="customRadioInline2">Female</label>
+                   class="custom-control-input btn-radio" [attr.disabled]="!isEdit ? true: null">
+            <label class="btn-radio__label" for="customRadioInline2">Female</label>
           </div>
 
         </div>
@@ -81,6 +100,7 @@
           class="form-control"
           [class.valid]="!title?.invalid"
           [class.error]="title?.invalid"
+          [attr.disabled]="!isEdit ? true: null"
           formControlName="title">
           <option *ngFor="let position of titles; index as i" [value]="position">{{position}}</option>
         </select>
@@ -90,12 +110,12 @@
       </div>
       <div class="form-group">
         <input type="text" class="form-control"
-               [class.valid]="!email?.invalid"
-               [class.error]="email?.invalid"
+               [class.valid]="!email?.invalid && (!email?.dirty || !email?.touched)"
+               [class.error]="email?.invalid && (email?.dirty || email?.touched)"
                [disabled]="!data.isCreate"
                [readonly]="!data.isCreate"
                formControlName="email" required placeholder="Email">
-        <div *ngIf="email?.invalid" class="invalid">
+        <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="invalid">
           <div *ngIf="email?.errors?.['required']">
             Please enter user email
           </div>
@@ -108,16 +128,8 @@
         </div>
       </div>
 
-      <div mat-dialog-actions class="d-flex justify-content-between">
-        <div class="left-action">
-          <button
-            mat-raised-button
-            [hidden]="data.isCreate"
-            class="dialog-button dialog-button__delete"
-            (click)="openConfirmDelete()">
-            DELETE USER
-          </button>
-        </div>
+      <div mat-dialog-actions class="d-flex justify-content-end">
+
         <div class="right-action">
           <button mat-button (click)="onNoClick()">DISCARD</button>
           <button type="submit"
