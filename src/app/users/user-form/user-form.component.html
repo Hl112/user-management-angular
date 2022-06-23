@@ -130,7 +130,7 @@
 
       <div mat-dialog-actions class="d-flex justify-content-end">
 
-        <div class="right-action">
+        <div class="right-action" [hidden]="!isEdit">
           <button mat-button (click)="onNoClick()">DISCARD</button>
           <button type="submit"
                   mat-raised-button
