@@ -1,6 +1,7 @@
 import { User } from "../shared/user";
 
 export interface UserInPosition{
-  name: string;
+  id: number;
+  name?: string;
   children? : User[]
 }

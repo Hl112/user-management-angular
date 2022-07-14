@@ -1,56 +1,62 @@
 import {Injectable} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {map, Observable} from "rxjs";
+import {map, Observable, of} from "rxjs";
 import {User} from "../shared/user";
 import {selectUsers} from "../store/user.selector";
 import {addUser, updateUser} from "../store/users.actions";
 import {UserInPosition} from "../user-list/user-in-position";
+import {HttpClient, HttpResponse} from "@angular/common/http";
+import {Position} from "../shared/position";
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  apiUser: string = "https://hl112.tk/api/v1/user"
+  apiPosition: string = "https://hl112.tk/api/v1/position"
+  // users$: Observable<User[]> = this.store.select(selectUsers);
+  users$: Observable<HttpResponse<User[]>>;
+  position$: Observable<Position[]>;
 
-  users$: Observable<User[]> = this.store.select(selectUsers);
-  titles : Array<string> = ["Team lead", "Architecture","Web Developer","Tester","UI/UX","DBA"];
+  titles: Array<Position> = [];
 
   constructor(
-    private store: Store
+    private store: Store,
+    private http: HttpClient
   ) {
+    this.position$ = this.http.get<Position[]>(this.apiPosition);
+    this.position$.subscribe(positionArr => {
+      this.titles = positionArr;
+    });
+    this.users$ = this.http.get<User[]>(this.apiUser, {observe : 'response'});
   }
 
-  loadUser(){
-    return this.store.select(selectUsers);
+  loadUser(sortColumn: string, sortOrder: boolean, searchValue: string) {
+    let url = this.apiUser + `?sortColumn=${sortColumn}&orderBy=${sortOrder ? 'DESC': 'ASC'}`;
+    if(searchValue.trim().length != 0) url+= `&searchValue=${searchValue}`;
+    this.users$ = this.http.get<User[]>(url, {observe: 'response'});
+    return this.users$;
+  }
+
+  getUserByEmail(email: string) : Observable<HttpResponse<User>>{
+    return this.http.get<User>(`${this.apiUser}/email/${email}`, {observe: 'response'});
   }
 
   createUser(userData: User) {
-    let isExisted = false;
-    this.users$
-      .pipe(
-        map(array => {
-          let existed = array.find(user => user.email === userData.email)
-          return existed == undefined;
-        }),
-      )
-      .subscribe(result => {
-        isExisted = result;
-      });
-
-    if (isExisted) {
-      this.store.dispatch(addUser({user: userData}));
-      return true;
-    } else
-      return false;
-
+    return this.http.post(this.apiUser, userData, {observe : 'response'});
   }
 
-  updateUser(userData: User){
-    this.store.dispatch(updateUser({user : userData}));
+  updateUser(userData: User) {
+    return  this.http.put(this.apiUser, userData, { observe: 'response' });
+  }
+
+  deleteUser(userId: number){
+    return this.http.delete(this.apiUser + `/${userId}`, {observe: 'response'});
   }
 
   // @ts-ignore
-  sortUser(arrUser?: User[], sortBy : keyof User, sortOrder: boolean ) {
+  sortUser(arrUser?: User[], sortBy: keyof User, sortOrder: boolean) {
     let result: User[] = [];
 
     if (arrUser === undefined || arrUser === null || arrUser.length === 0)
@@ -114,19 +120,24 @@ export class UserService {
   }
 
   convertUserGroupByPosition(arrUser: User[]) {
-    let data: UserInPosition[] = [
-      {name: 'Team lead', children: []},
-      {name: 'Architecture', children: []},
-      {name: 'Web Developer', children: []},
-      {name: 'Tester', children: []},
-      {name: 'UI/UX', children: []},
-      {name: 'DBA', children: []},
-    ]
+    return this.position$.pipe(
+      map((positionArr) => {
+        let data: UserInPosition[] = positionArr.map(position => {
+               let userInPosition: UserInPosition = {
+                 id: position.id,
+                 name: position.position_name,
+                 children: []
+               };
+               return userInPosition;
+             });
 
-    for (let user of arrUser) {
-      let k = data.find(dt => dt.name == user.title)
-      k?.children?.push(user);
-    }
-    return data;
+            if(arrUser != null)
+             for (let user of arrUser) {
+               let k = data.find(dt => dt.id == user.position_id)
+               k?.children?.push(user);
+             }
+             return data;
+      })
+    );
   }
 }

@@ -10,7 +10,7 @@
       <div *ngIf="confirmForm.invalid" class="invalid">Please input the email as confirmation</div>
     </div>
     <div mat-dialog-actions class="d-flex justify-content-end">
-      <button mat-button (click)="onNoClick()">DISCARD</button>
+      <button mat-button (click)="onDiscard()">DISCARD</button>
       <button type="submit"
               mat-raised-button
               [disabled]="confirmForm.invalid"

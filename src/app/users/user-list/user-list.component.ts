@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {User} from "../shared/user";
 import {UserInPosition} from "./user-in-position";
-import {Observable} from "rxjs";
+import {catchError, debounce, debounceTime, delay, distinctUntilChanged, Observable, of} from "rxjs";
 import {Store} from "@ngrx/store";
 import {MatDialog} from "@angular/material/dialog";
 import {UserFormComponent} from "../user-form/user-form.component";
 import {UserService} from "../services/user.service";
+import {HttpResponse, HttpStatusCode} from "@angular/common/http";
 
 @Component({
   selector: 'app-user-list',
@@ -14,30 +15,18 @@ import {UserService} from "../services/user.service";
 })
 export class UserListComponent implements OnInit {
 
-  loadUsers() {
-    let users: User[] = this.users;
+  sortBy: keyof User = 'createDate';
+  sortOrder: boolean = false; // default ASC
+  searchValue: string = '';
 
-    //--  Apply Sort
-    users = this.userService.sortUser(users, this.sortBy, this.sortOrder);
+  users!: User[];
+  users$?: Observable<HttpResponse<User[]>>;
+  userInPosition$?: Observable<UserInPosition[]>;
 
-    //--  Apply Search
-    users = this.userService.searchUser(users, this.searchValue);
-
-    //-- Apply View
-    this.userInPosition = this.userService.convertUserGroupByPosition(users);
-  }
-
-  openDialog(user?: User) {
-    this.dialog.open(UserFormComponent, {
-      data: {
-        title: user ? "UPDATE USER" : "CREATE NEW USER",
-        user: user,
-        isCreate: !user
-      },
-      width: "600px",
-      height: "600px"
-    })
-  }
+  @ViewChild('customLoadingTemplate', {static: false})
+  customLoadingTemplate!: TemplateRef<any>;
+  public loading = true;
+  public loadingTemplate!: TemplateRef<any>;
 
   constructor(
     private store: Store,
@@ -47,20 +36,44 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.users$ = this.userService.loadUser();
-    this.users$.subscribe((arrUser) => {
-      this.users = arrUser;
-      this.loadUsers();
-    })
-
+    this.loadUsers();
   }
 
-  sortBy: keyof User = 'createDate';
-  sortOrder: boolean = false; // default ASC
-  searchValue: string = '';
+  loadUsers() {
+    this.loading = true;
+    this.users$ = this.userService.loadUser(this.sortBy, this.sortOrder, this.searchValue);
+    this.users$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        delay(100)
+      )
+      .subscribe((response) => {
+        if (response.status == HttpStatusCode.Ok)
+          this.users = response.body ?? [];
+        if (response.status == HttpStatusCode.NoContent)
+          this.users = [];
+        this.loading = false;
+        //-- Apply View
+        this.userInPosition$ = this.userService.convertUserGroupByPosition(this.users);
+      });
+  }
 
-  users!: User[];
-  users$?: Observable<User[]>;
-  userInPosition?: UserInPosition[];
+  openDialog(user?: User) {
+    const dialogRef = this.dialog.open(UserFormComponent, {
+      data: {
+        title: user ? "UPDATE USER" : "CREATE NEW USER",
+        user: user,
+        isCreate: !user
+      },
+      width: "600px",
+      height: "600px"
+    })
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadUsers()
+      }
+    });
+  }
 }

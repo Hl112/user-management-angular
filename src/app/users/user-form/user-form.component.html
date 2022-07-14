@@ -23,9 +23,9 @@
           <div class="d-flex justify-content-center dialog-img">
             <img src="assets/images/avatar.png" class="img-avatar" alt="No-Avatar">
             <img src="assets/images/plus.png" class="img-plus" alt="plus-image">
-            <input type="file" name="file"
-                   accept="image/*"
-                   formControlName="image" id="imgC">
+<!--            <input type="file" name="file"-->
+<!--                   accept="image/*"-->
+<!--                   formControlName="image" id="imgC">-->
           </div>
         </label>
       </div>
@@ -34,7 +34,7 @@
                [class.valid]="!firstName?.invalid && (!firstName?.dirty || !firstName?.touched)"
                [class.error]="firstName?.invalid && (firstName?.dirty || firstName?.touched)"
                [readOnly]="!isEdit"
-               formControlName="firstName" required placeholder="First name">
+               formControlName="first_name" required placeholder="First name">
         <div *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)" class="invalid">
           <div *ngIf="firstName?.errors?.['required']">
             Please enter user first name
@@ -51,7 +51,7 @@
                [class.valid]="!lastName?.invalid && (lastName?.dirty || lastName?.touched)"
                [class.error]="lastName?.invalid && (lastName?.dirty || lastName?.touched)"
                [readOnly]="!isEdit"
-               formControlName="lastName"
+               formControlName="last_name"
                required placeholder="Last name">
         <div *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)" class="invalid">
           <div *ngIf="lastName?.errors?.['required']">
@@ -66,14 +66,14 @@
         <div class="form-group col-7">
           <input type="date" id="date"
                  [attr.data-date]="dateTime"
-                 [class.valid]="!userForm.controls['dateOfBirth']?.hasError('invalidDate')"
-                 [class.error]="userForm.controls['dateOfBirth']?.hasError('invalidDate')"
+                 [class.valid]="!userForm.controls['date_of_birth']?.hasError('invalidDate')"
+                 [class.error]="userForm.controls['date_of_birth']?.hasError('invalidDate')"
                  [readOnly]="!isEdit"
                  (ngModelChange)="onChangeDate($event)"
                  value="2022-06-17"
                  class="form-control"
-                 formControlName="dateOfBirth" placeholder="Date of birth (optional)">
-          <div *ngIf="userForm.controls['dateOfBirth']?.hasError('invalidDate')" class="invalid">
+                 formControlName="date_of_birth" placeholder="Date of birth (optional)">
+          <div *ngIf="userForm.controls['date_of_birth']?.hasError('invalidDate')" class="invalid">
             Wrong date format
           </div>
         </div>
@@ -101,8 +101,8 @@
           [class.valid]="!title?.invalid"
           [class.error]="title?.invalid"
           [attr.disabled]="!isEdit ? true: null"
-          formControlName="title">
-          <option *ngFor="let position of titles; index as i" [value]="position">{{position}}</option>
+          formControlName="position_id">
+          <option *ngFor="let position of titles; index as i" [value]="position.id">{{position.position_name}}</option>
         </select>
         <div *ngIf="title?.invalid" class="invalid">
           Title is required.

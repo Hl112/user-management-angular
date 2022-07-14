@@ -51,9 +51,15 @@
       </div>
     </div>
   </div>
+  <ng-template #customLoadingTemplate>
+  </ng-template>
+  <ngx-loading
+    [show]="loading"
+    [template]="loadingTemplate"
+  ></ngx-loading>
   <div class="row tree-user mt-4">
     <div class="accordion" [id]="'accordion'">
-      <div class="accordion-item" *ngFor="let uip of userInPosition; index as i">
+      <div class="accordion-item" *ngFor="let uip of userInPosition$ | async; index as i">
         <h2 class="accordion-header" [id]="'heading' + i">
           <button
             class="accordion-button"
@@ -81,5 +87,7 @@
       </div>
     </div>
   </div>
+
+
 </div>
 

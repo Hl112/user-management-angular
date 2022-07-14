@@ -7,7 +7,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UsersComponent } from './users/users.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
-import { StoreModule } from '@ngrx/store';
+import {ngxLoadingAnimationTypes, NgxLoadingModule} from "ngx-loading";
 
 @NgModule({
   declarations: [
@@ -20,6 +20,15 @@ import { StoreModule } from '@ngrx/store';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    NgxLoadingModule.forRoot({
+      animationType: ngxLoadingAnimationTypes.wanderingCubes,
+      backdropBackgroundColour: 'rgba(0,0,0,0.5)',
+      backdropBorderRadius: '4px',
+      primaryColour: '#ffffff',
+      secondaryColour: '#ffffff',
+      tertiaryColour: '#ffffff',
+      fullScreenBackdrop: false,
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
